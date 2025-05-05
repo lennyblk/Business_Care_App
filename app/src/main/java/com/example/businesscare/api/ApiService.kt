@@ -5,7 +5,7 @@ import retrofit2.Response
 import retrofit2.http.*
 
 interface ApiService {
-    @POST("login")  // ou "api/login" selon votre configuration Laravel
+    @POST("auth/login")
     suspend fun login(@Body credentials: LoginRequest): Response<LoginResponse>
 
     @GET("events")
@@ -16,6 +16,12 @@ interface ApiService {
 
     @POST("events/{id}/register")
     suspend fun registerToEvent(
+        @Path("id") eventId: Int,
+        @Header("Authorization") token: String
+    ): Response<Unit>
+
+    @DELETE("events/{id}/unregister")
+    suspend fun unregisterFromEvent(
         @Path("id") eventId: Int,
         @Header("Authorization") token: String
     ): Response<Unit>

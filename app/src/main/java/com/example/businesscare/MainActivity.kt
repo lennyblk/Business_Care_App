@@ -27,26 +27,37 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.appBarMain.toolbar)
 
         binding.appBarMain.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+            Snackbar.make(view, "Contacter l'assistance", Snackbar.LENGTH_LONG)
                 .setAction("Action", null)
                 .setAnchorView(R.id.fab).show()
         }
+
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
+        // Configuration des destinations principales
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow
+                R.id.nav_dashboard, R.id.nav_events, R.id.nav_planning
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        // Récupérer les infos utilisateur pour afficher dans le header
+        val sharedPref = getSharedPreferences("BusinessCarePrefs", MODE_PRIVATE)
+        val userName = sharedPref.getString("userName", "")
+        val userEmail = sharedPref.getString("userEmail", "")
+
+        // Mettre à jour le header de navigation avec les infos utilisateur
+        val headerView = navView.getHeaderView(0)
+        headerView.findViewById<android.widget.TextView>(R.id.nav_header_name).text = userName
+        headerView.findViewById<android.widget.TextView>(R.id.nav_header_email).text = userEmail
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate du menu; cela ajoute des éléments à la barre d'action si elle est présente
         menuInflater.inflate(R.menu.main, menu)
         return true
     }
@@ -55,5 +66,4 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
-
 }
