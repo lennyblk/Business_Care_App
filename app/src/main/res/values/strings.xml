@@ -10,4 +10,19 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
+
+    <string name="no_description">Pas de description</string>
+    <string name="location_not_specified">Lieu non spécifié</string>
+    <string name="register">S\'inscrire</string>
+    <string name="unregister">Se désinscrire</string>
+    <string name="registration_success">Inscription réussie</string>
+    <string name="registration_failed">Échec de l\'inscription</string>
+    <string name="registration_error">Erreur d\'inscription</string>
+    <string name="unregistration_success">Désinscription réussie</string>
+    <string name="unregistration_failed">Échec de la désinscription</string>
+    <string name="unregistration_error">Erreur de désinscription</string>
+    <string name="registration_not_found">Inscription non trouvée</string>
+    <string name="invalid_session">Session invalide</string>
+    <string name="loading_error">Erreur de chargement</string>
+    <string name="network_error">Erreur réseau</string>
 </resources>
