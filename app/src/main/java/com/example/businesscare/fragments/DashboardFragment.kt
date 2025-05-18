@@ -1,5 +1,6 @@
 package com.example.businesscare.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -28,23 +29,18 @@ class DashboardFragment : Fragment() {
         welcomeTextView = view.findViewById(R.id.welcomeTextView)
         upcomingEventsTextView = view.findViewById(R.id.upcomingEventsTextView)
 
-        // Récupérer le nom d'utilisateur depuis SharedPreferences
         val sharedPref = requireActivity().getSharedPreferences("BusinessCarePrefs",
             android.content.Context.MODE_PRIVATE)
         val userName = sharedPref.getString("userName", "")
 
-        // Afficher le message de bienvenue
         welcomeTextView.text = "Bienvenue, $userName !"
 
-        // Charger les événements à venir
         loadUpcomingEvents()
 
         return view
     }
 
     private fun loadUpcomingEvents() {
-        // Récupérer le token des SharedPreferences (si vous l'avez implémenté)
-        // Sinon, cette fonction peut fonctionner sans authentification pour le moment
 
         val sharedPref = requireActivity().getSharedPreferences("BusinessCarePrefs",
             android.content.Context.MODE_PRIVATE)
@@ -52,8 +48,11 @@ class DashboardFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
+                val sharedPref = requireActivity().getSharedPreferences("BusinessCarePrefs", Context.MODE_PRIVATE)
+                val employeeId = sharedPref.getInt("userId", 0) // 0 comme valeur par défaut
+
                 val apiService = ApiConfig.retrofit.create(ApiService::class.java)
-                val response = apiService.getEmployeeEvents("") // Remplacer par un vrai token si nécessaire
+                val response = apiService.getEmployeeEvents(employeeId)
 
                 if (response.isSuccessful && response.body() != null) {
                     val events = response.body()!!
@@ -64,7 +63,6 @@ class DashboardFragment : Fragment() {
                         val upcomingEventsText = StringBuilder()
                         upcomingEventsText.append("Prochains événements :\n\n")
 
-                        // Limiter à 3 événements pour la lisibilité
                         val eventsToShow = if (events.size > 3) events.take(3) else events
 
                         for (event in eventsToShow) {

@@ -1,5 +1,6 @@
 package com.example.businesscare.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -45,8 +46,11 @@ class PlanningFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
+                val sharedPref = requireActivity().getSharedPreferences("BusinessCarePrefs", Context.MODE_PRIVATE)
+                val employeeId = sharedPref.getInt("userId", 0)
+
                 val apiService = ApiConfig.retrofit.create(ApiService::class.java)
-                val response = apiService.getEmployeeEvents("")
+                val response = apiService.getEmployeeEvents(employeeId)
 
                 progressBar.visibility = View.GONE
 
@@ -56,7 +60,6 @@ class PlanningFragment : Fragment() {
                     if (events.isEmpty()) {
                         noPlanningText.visibility = View.VISIBLE
                     } else {
-                        // Trier les événements par date
                         val sortedEvents = events.sortedBy { it.date }
                         displayPlanning(sortedEvents)
                     }
@@ -75,17 +78,15 @@ class PlanningFragment : Fragment() {
     }
 
     private fun displayPlanning(events: List<Event>) {
-        // Regrouper les événements par date
         val eventsByDate = events.groupBy { it.date }
 
         for ((date, eventsForDate) in eventsByDate) {
-            // Ajouter une en-tête pour la date
+            // en-tête pour la date
             val dateHeader = layoutInflater.inflate(R.layout.item_date_header, planningContainer, false)
             val dateTextView = dateHeader.findViewById<TextView>(R.id.dateHeaderText)
             dateTextView.text = formatDate(date)
             planningContainer.addView(dateHeader)
 
-            // Ajouter les événements pour cette date
             for (event in eventsForDate) {
                 val eventView = layoutInflater.inflate(R.layout.item_planning_event, planningContainer, false)
 
@@ -95,7 +96,6 @@ class PlanningFragment : Fragment() {
                 val cancelButton = eventView.findViewById<TextView>(R.id.cancelButton)
 
                 titleTextView.text = event.name
-                // Extraire l'heure de la date complète si possible
                 timeTextView.text = extractTimeFromDate(date)
                 locationTextView.text = event.location ?: "Lieu non spécifié"
 
@@ -109,8 +109,6 @@ class PlanningFragment : Fragment() {
     }
 
     private fun formatDate(dateString: String): String {
-        // Formater la date selon vos besoins
-        // Exemple simple (à adapter selon le format de votre API)
         return dateString
     }
 
@@ -133,7 +131,6 @@ class PlanningFragment : Fragment() {
 
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "Désinscription réussie", Toast.LENGTH_SHORT).show()
-                    // Recharger le planning
                     loadPlanning()
                 } else {
                     Toast.makeText(requireContext(), "Erreur lors de la désinscription", Toast.LENGTH_SHORT).show()
